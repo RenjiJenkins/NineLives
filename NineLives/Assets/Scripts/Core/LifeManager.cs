@@ -9,14 +9,16 @@ public class LifeManager : MonoBehaviour
     [Header("Host Register (1 through 9)")]
     public List<HostLifeData> lifeSequence = new List<HostLifeData>();
     [Tooltip("0 = Life 1, 8 = Life 9")]
-    public int currentLifeIndex = 0; 
+    public int currentLifeIndex = 0;
 
     [Header("UI & Player References")]
     public PlayerController2D playerController;
     [SerializeField] private TextMeshProUGUI lifeTextUI;
 
-    [Header("Dev Testing Settings")]
-    [SerializeField] private Transform testSpawnPoint;
+    [Header("Default Spawn Point")]
+    public Transform defaultSpawnPoint;
+
+    private Vector3 currentRespawnPosition;
 
     private void Awake()
     {
@@ -33,6 +35,25 @@ public class LifeManager : MonoBehaviour
 
     private void Start()
     {
+        // Try loading saved data on game launch
+        if (SaveSystem.Instance != null && SaveSystem.Instance.LoadGame(out Vector3 savedPos, out int savedLife))
+        {
+            currentLifeIndex = savedLife;
+            currentRespawnPosition = savedPos;
+            if (playerController != null)
+            {
+                playerController.transform.position = savedPos;
+            }
+        }
+        else if (defaultSpawnPoint != null)
+        {
+            currentRespawnPosition = defaultSpawnPoint.position;
+        }
+        else if (playerController != null)
+        {
+            currentRespawnPosition = playerController.transform.position;
+        }
+
         ApplyCurrentLife();
         UpdateLifeUI();
     }
@@ -40,15 +61,16 @@ public class LifeManager : MonoBehaviour
     private void Update()
     {
         #if UNITY_EDITOR
+        // Test Kill Key (K) for developer builds
         if (Input.GetKeyDown(KeyCode.K))
         {
-            Debug.Log($"[DEV] Test Kill Key Pressed! Current Life before kill: {currentLifeIndex + 1}");
-            TriggerDeathAndSwitchHost(testSpawnPoint);
+            Debug.Log($"[DEV] Test Kill Key Pressed! Current Life: {currentLifeIndex + 1}");
+            TriggerDeathAndSwitchHost();
         }
         #endif
     }
 
-    public void TriggerDeathAndSwitchHost(Transform newHostSpawnPoint = null)
+    public void TriggerDeathAndSwitchHost(Transform overrideSpawnPoint = null)
     {
         if (lifeSequence == null || lifeSequence.Count == 0)
         {
@@ -56,25 +78,39 @@ public class LifeManager : MonoBehaviour
             return;
         }
 
-        // Increment index and wrap around to 0 when passing Life 9 (index 8)
+        // Increment life index and wrap around from 9 back to 1
         currentLifeIndex = (currentLifeIndex + 1) % lifeSequence.Count;
 
-        // Teleport player to spawn point if assigned
-        if (newHostSpawnPoint != null && playerController != null)
+        // Determine spawn destination (custom override or saved spawn position)
+        Vector3 targetSpawnPos = overrideSpawnPoint != null 
+            ? overrideSpawnPoint.position 
+            : SaveSystem.Instance != null 
+                ? SaveSystem.Instance.GetSavedRespawnPosition(currentRespawnPosition) 
+                : currentRespawnPosition;
+
+        if (playerController != null)
         {
-            playerController.transform.position = newHostSpawnPoint.position;
+            playerController.transform.position = targetSpawnPos;
         }
 
         ApplyCurrentLife();
         UpdateLifeUI();
 
-        if (currentLifeIndex == 0)
+        // Update active save file with the new life state at the respawn point
+        if (SaveSystem.Instance != null)
         {
-            Debug.Log($"[Loop Reset] Julian died on Life {lifeSequence.Count}! Returning to Life 1: {lifeSequence[0].hostName}");
+            SaveSystem.Instance.SaveGame();
         }
-        else
+
+        Debug.Log($"Julian died! Respawning at {targetSpawnPos} as Life {currentLifeIndex + 1}: {lifeSequence[currentLifeIndex].hostName}");
+    }
+
+    public void SetNewCheckpoint(Vector3 newCheckpointPos)
+    {
+        currentRespawnPosition = newCheckpointPos;
+        if (SaveSystem.Instance != null)
         {
-            Debug.Log($"Julian died! Now possessing Life {currentLifeIndex + 1}: {lifeSequence[currentLifeIndex].hostName}");
+            SaveSystem.Instance.SaveCustomRespawnPoint(newCheckpointPos);
         }
     }
 
