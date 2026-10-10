@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HostLifeData
   hostName: Julian
   lifeNumber: 0
-  moveSpeed: 7.5
-  jumpForce: 7.5
+  moveSpeed: 5
+  jumpForce: 7
   maxJumps: 1
   defaultSprite: {fileID: 0}
   animatorController: {fileID: 0}

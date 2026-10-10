@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HostLifeData
   hostName: Marlow
   lifeNumber: 1
-  moveSpeed: 8
+  moveSpeed: 5
   jumpForce: 5
   maxJumps: 1
   defaultSprite: {fileID: 0}

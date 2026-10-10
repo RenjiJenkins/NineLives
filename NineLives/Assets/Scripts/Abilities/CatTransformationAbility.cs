@@ -37,7 +37,6 @@ public class CatTransformationAbility : MonoBehaviour
 
     private void Start()
     {
-        // Cache initial human dimensions
         if (boxCollider != null)
         {
             humanColliderSize = boxCollider.size;
@@ -52,10 +51,21 @@ public class CatTransformationAbility : MonoBehaviour
 
     private void Update()
     {
-        // Toggle transformation with 'C' key (or custom input action)
+        // Toggle transformation with 'C' key
         if (Input.GetKeyDown(KeyCode.C))
         {
-            ToggleCatForm();
+            // LOCK CHECK: Only allow transformation if the active host is Life 1 (Julian)
+            if (playerController != null && playerController.currentHost != null)
+            {
+                if (playerController.currentHost.lifeNumber == 0)
+                {
+                    ToggleCatForm();
+                }
+                else
+                {
+                    Debug.Log($"[Ability Locked] This host ({playerController.currentHost.hostName}) cannot transform into a cat! Only Life 1 (Julian) has this innate trait.");
+                }
+            }
         }
     }
 
@@ -67,7 +77,6 @@ public class CatTransformationAbility : MonoBehaviour
         }
         else
         {
-            // Ensure there is room above before changing back to human form
             if (CanStandUp())
             {
                 TransformToHuman();
@@ -83,22 +92,18 @@ public class CatTransformationAbility : MonoBehaviour
     {
         isCatForm = true;
 
-        // Cache human movement parameters before applying cat stats
         if (playerController != null && playerController.currentHost != null)
         {
             humanMoveSpeed = playerController.currentHost.moveSpeed;
             humanJumpForce = playerController.currentHost.jumpForce;
 
-            // Apply boosted cat stats
             playerController.currentHost.moveSpeed = catMoveSpeed;
             playerController.currentHost.jumpForce = catJumpForce;
         }
 
-        // Shrink collider for small tunnels
         boxCollider.size = catColliderSize;
         boxCollider.offset = catColliderOffset;
 
-        // Swap animator controller if provided
         if (animator != null && catAnimator != null)
         {
             animator.runtimeAnimatorController = catAnimator;
@@ -111,18 +116,15 @@ public class CatTransformationAbility : MonoBehaviour
     {
         isCatForm = false;
 
-        // Restore human movement stats
         if (playerController != null && playerController.currentHost != null)
         {
             playerController.currentHost.moveSpeed = humanMoveSpeed;
             playerController.currentHost.jumpForce = humanJumpForce;
         }
 
-        // Restore human collider
         boxCollider.size = humanColliderSize;
         boxCollider.offset = humanColliderOffset;
 
-        // Restore human animator controller
         if (animator != null && humanAnimator != null)
         {
             animator.runtimeAnimatorController = humanAnimator;
@@ -134,7 +136,6 @@ public class CatTransformationAbility : MonoBehaviour
     private bool CanStandUp()
     {
         if (headCheck == null) return true;
-        // Check if obstacles exist overhead before returning to full human height
         return !Physics2D.OverlapCircle(headCheck.position, ceilingCheckRadius, ceilingLayer);
     }
 
