@@ -15,10 +15,10 @@ MonoBehaviour:
   hostName: Marlow
   lifeNumber: 1
   moveSpeed: 8
-  jumpForce: 14
+  jumpForce: 5
   maxJumps: 1
   defaultSprite: {fileID: 0}
   animatorController: {fileID: 0}
-  colliderSize: {x: 1, y: 2}
+  colliderSize: {x: 1, y: 1}
   colliderOffset: {x: 0, y: 0}
   innateAbility: {fileID: 0}

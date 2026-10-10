@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HostLifeData
   hostName: Julian
   lifeNumber: 0
-  moveSpeed: 8
-  jumpForce: 14
+  moveSpeed: 7.5
+  jumpForce: 7.5
   maxJumps: 1
   defaultSprite: {fileID: 0}
   animatorController: {fileID: 0}
-  colliderSize: {x: 1, y: 2}
+  colliderSize: {x: 1, y: 1}
   colliderOffset: {x: 0, y: 0}
   innateAbility: {fileID: 0}
