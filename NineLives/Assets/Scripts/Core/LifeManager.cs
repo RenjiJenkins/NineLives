@@ -16,7 +16,7 @@ public class LifeManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI lifeTextUI;
 
     [Header("Dev Testing Settings")]
-    [SerializeField] private Transform testSpawnPoint; // Assign a test spawn position in Inspector
+    [SerializeField] private Transform testSpawnPoint;
 
     private void Awake()
     {
@@ -39,7 +39,6 @@ public class LifeManager : MonoBehaviour
 
     private void Update()
     {
-        // Development Build / Editor feature for instant death testing
         #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.K))
         {
@@ -51,26 +50,31 @@ public class LifeManager : MonoBehaviour
 
     public void TriggerDeathAndSwitchHost(Transform newHostSpawnPoint = null)
     {
-        // Check if we can still advance to a new life (Max index is lifeSequence.Count - 1)
-        if (currentLifeIndex < lifeSequence.Count - 1)
+        if (lifeSequence == null || lifeSequence.Count == 0)
         {
-            currentLifeIndex++; // Move to next life (e.g., from 0 to 1)
+            Debug.LogError("[LifeManager] Cannot switch host: lifeSequence list is empty!");
+            return;
+        }
 
-            // Teleport player to new spawn point if assigned
-            if (newHostSpawnPoint != null)
-            {
-                playerController.transform.position = newHostSpawnPoint.position;
-            }
+        // Increment index and wrap around to 0 when passing Life 9 (index 8)
+        currentLifeIndex = (currentLifeIndex + 1) % lifeSequence.Count;
 
-            ApplyCurrentLife();
-            UpdateLifeUI();
+        // Teleport player to spawn point if assigned
+        if (newHostSpawnPoint != null && playerController != null)
+        {
+            playerController.transform.position = newHostSpawnPoint.position;
+        }
 
-            Debug.Log($"Julian died! Now possessing Life {currentLifeIndex + 1}: {lifeSequence[currentLifeIndex].hostName}");
+        ApplyCurrentLife();
+        UpdateLifeUI();
+
+        if (currentLifeIndex == 0)
+        {
+            Debug.Log($"[Loop Reset] Julian died on Life {lifeSequence.Count}! Returning to Life 1: {lifeSequence[0].hostName}");
         }
         else
         {
-            // Already on Life 9 (index 8)
-            Debug.LogWarning($"Life {currentLifeIndex + 1} Reached - Final Life! No more host bodies available.");
+            Debug.Log($"Julian died! Now possessing Life {currentLifeIndex + 1}: {lifeSequence[currentLifeIndex].hostName}");
         }
     }
 
@@ -78,7 +82,10 @@ public class LifeManager : MonoBehaviour
     {
         if (lifeSequence != null && currentLifeIndex < lifeSequence.Count && lifeSequence[currentLifeIndex] != null)
         {
-            playerController.LoadHostData(lifeSequence[currentLifeIndex]);
+            if (playerController != null)
+            {
+                playerController.LoadHostData(lifeSequence[currentLifeIndex]);
+            }
         }
         else
         {
