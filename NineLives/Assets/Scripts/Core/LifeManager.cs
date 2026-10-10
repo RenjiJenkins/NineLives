@@ -20,6 +20,8 @@ public class LifeManager : MonoBehaviour
 
     private Vector3 currentRespawnPosition;
 
+    public AudioSource deathSound;
+
     private void Awake()
     {
         if (Instance == null)
@@ -80,6 +82,9 @@ public class LifeManager : MonoBehaviour
 
         // Increment life index and wrap around from 9 back to 1
         currentLifeIndex = (currentLifeIndex + 1) % lifeSequence.Count;
+        
+        deathSound.Play();
+
 
         // Determine spawn destination (custom override or saved spawn position)
         Vector3 targetSpawnPos = overrideSpawnPoint != null 
