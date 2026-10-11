@@ -8,6 +8,7 @@ TagManager:
   - MindControllable
   - Grabbable
   - Shatterable
+  - Enemy
   layers:
   - Default
   - TransparentFX

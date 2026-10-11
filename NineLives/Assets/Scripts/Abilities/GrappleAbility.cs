@@ -41,33 +41,43 @@ public class GrappleAbility : MonoBehaviour
     }
 
     private void Update()
+{
+    // Check for 'Q' key press
+    if (Input.GetKeyDown(KeyCode.Q))
     {
-        // Check for 'Q' key press
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            Debug.Log("[Grapple] Q Key pressed! Checking grapple state...");
+        Debug.Log("[Grapple] Q Key pressed! Checking grapple state...");
 
-            if (!isGrappling)
-            {
-                TryShootGrapple();
-            }
-            else
-            {
-                StopGrapple();
-            }
+        if (!isGrappling)
+        {
+            TryShootGrapple();
         }
-
-        // Host lock checks
-        if (playerController == null || playerController.currentHost == null) return;
-        if (playerController.currentHost.lifeNumber != requiredLifeNumber) return;
-
-        // If currently grappling, allow reeling in/out with W and S keys
-        if (isGrappling)
+        else
         {
-            HandleReeling();
-            UpdateRopeVisuals();
+            StopGrapple();
         }
     }
+
+    // Always update rope visuals every frame as long as we are grappling, 
+    // regardless of host locks or other checks
+    if (isGrappling)
+    {
+        HandleReeling();
+        UpdateRopeVisuals();
+    }
+
+    // Host lock checks for initial input
+    if (playerController == null || playerController.currentHost == null) return;
+    if (playerController.currentHost.lifeNumber != requiredLifeNumber) return;
+}
+
+private void UpdateRopeVisuals()
+{
+    if (lineRenderer != null && firePoint != null)
+    {
+        lineRenderer.SetPosition(0, firePoint.position);
+        lineRenderer.SetPosition(1, grapplePoint);
+    }
+}
 
     private void TryShootGrapple()
     {
@@ -133,14 +143,7 @@ public class GrappleAbility : MonoBehaviour
         }
     }
 
-    private void UpdateRopeVisuals()
-    {
-        if (lineRenderer != null && isGrappling)
-        {
-            lineRenderer.SetPosition(0, firePoint.position);
-            lineRenderer.SetPosition(1, grapplePoint);
-        }
-    }
+    
 
     private void StopGrapple()
     {
