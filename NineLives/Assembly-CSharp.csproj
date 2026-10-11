@@ -60,8 +60,8 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
     <Compile Include="Assets\Scripts\Abilities\BaseAbility.cs" />
-    <Compile Include="Assets\Scripts\Abilities\SuperStrengthAbility.cs" />
     <Compile Include="Assets\Scripts\Abilities\BarrierAbility.cs" />
+    <Compile Include="Assets\Scripts\Abilities\SuperStrengthAbility.cs" />
     <Compile Include="Assets\Scripts\Abilities\BodyHardening.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_UiFrameRateCounter.cs" />
@@ -75,6 +75,7 @@
     <Compile Include="Assets\Scripts\Core\Checkpoint.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
     <Compile Include="Assets\Scripts\Abilities\AbilityData.cs" />
+    <Compile Include="Assets\Scripts\Abilities\GrappleAbility.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />
     <Compile Include="Assets\Scripts\Abilities\AirJumpAbility.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
